@@ -43,7 +43,7 @@ function identifyShapes( colors ){
   var differentColors = [];
   var colorCounter = 0;
   var max;
-  var sameColor = 0;
+  var sameColor = "false";
   var color;
   for( var i = 0; i < colors.length; i++ ) {
     rgba.push( [] );
@@ -59,30 +59,37 @@ function identifyShapes( colors ){
     }
   }
   console.log(rgba);
+  var alpha = ['a', 'b', 'c'];
+var numeric = [1, 2, 3];
+
+alpha.concat(numeric);
+console.log(alpha);
+// result in ['a', 'b', 'c', 1, 2, 3]
   for ( i = 0; i < rgba.length; i++ ){
     for ( j = 0; j < rgba[i].length; j++ ){
       if ( differentColors.length == 0){
+        console.log("hi");
         colorCounter = 0;
-        differentColors.push(rgba[i][j]);
-        differentColors[0].push(1);
+        differentColors.concat(rgba[i][j]);
+        console.log(differentColors);
+        // differentColors.push([]);
+        differentColors[0][4] = 1;
         console.log(differentColors[0]);
-      } else if ( differentColors[0][0] === rgba[i][j][0] && differentColors[0][1] === rgba[i][j][1] && differentColors[0][2] === rgba[i][j][2] && differentColors[0][3] === rgba[i][j][3] ) {
-        max = differentColors[0][4];
-        differentColors[0][4] = max + 1;
-        colorCounter = 0;
       } else {
-        colorCounter += 1;
         for ( x = 0; x < differentColors.length; x++ ){
-          if ( differentColors[x][0] === rgba[i][j][0] && differentColors[x][1] === rgba[i][j][1] && differentColors[x][2] === rgba[i][j][2] && differentColors[x][3] === rgba[i][j][3] ) {
+          if ( differentColors[x][0] == rgba[i][j][0] && differentColors[x][1] == rgba[i][j][1] && differentColors[x][2] == rgba[i][j][2] && differentColors[x][3] == rgba[i][j][3] ) {
             colorCounter = x;
-            max = differentColors[colorCounter][4];
-            differentColors[colorCounter][4] = max + 1;
-            sameColor = 1;
+            differentColors[colorCounter][4] += 1;
+            sameColor = "true";
+            console.log("hi");
           }
         }
-        if ( sameColor == 0 ){
-          differentColors.push(rgba[i][j]);
-          differentColors[colorCounter].push(1);
+        colorCounter += 1;
+        if ( sameColor === "false" ){
+          differentColors.concat(rgba[i][j]);
+          // console.log(differentColors);
+          // differentColors.push([]);
+          differentColors[colorCounter][4] = 1;
         }
       }
       }
