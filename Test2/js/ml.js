@@ -12,7 +12,6 @@ function previewFile(){
        } else {
            preview.src = "";
        }
-
   }
 
 previewFile();  //calls the function named previewFile()
@@ -24,11 +23,9 @@ function createCanvas(){
   canvas.height = img.height;
   canvas.getContext('2d').drawImage(img, 0, 0, img.width, img.height);
   var colors = [];
-  for( var i = 0; i < canvas.height; i++ ) {
-    colors.push( [] );
-  }
-  for ( i = 0; i < canvas.height; i++ ) {
-    colors[i].push(canvas.getContext('2d').getImageData(0, i, canvas.width, 1).data);
+  for( var i = 0, canvasHeight = canvas.height; i < canvasHeight; i++ ) {
+    colors[colors.length] =  [];
+    colors[i][0] = canvas.getContext('2d').getImageData(0, i, canvas.width, 1).data;
   }
   console.log(colors);
   identifyShapes(colors);
@@ -44,27 +41,32 @@ function identifyShapes( colors ){
   var sameColor;
   var color;
   var aArray = [];
-  for( var i = 0; i < colors.length; i++ ) {
-    rgba.push( [] );
+  var spliceOne = function(arr, index) {
+                         var len=arr.length;
+                         if (!len) { return }
+                         while (index<len) {
+                               arr[index] = arr[index+1]; index++ }
+                         arr.length--;
+                };
+  for( var i = 0, colorsLength = colors.length; i < colorsLength; i++ ) {
+    rgba[rgba.length] = [];
   }
-  for ( i = 0; i < colors.length; i++ ) {
-    for ( j = 0; j < colors[i][0].length; j += 4){
-      r = colors[i][0][j];
-      g = colors[i][0][j + 1];
-      b = colors[i][0][j + 2];
-      a = colors[i][0][j + 3];
-      rgba[i].push( [r, g, b, a] );
-    }
+  for ( i = 0, j = 0, colorsHeight = colors.length, colorsWidth = colors[i][0].length; i < colorsHeight && j < colorsWidth; j += 4, i = ( j == colorsWidth ) ? i + 1 : i, j = ( j == colorsWidth ) ? j = 0 : j ) {
+    r = colors[i][0][j];
+    g = colors[i][0][j + 1];
+    b = colors[i][0][j + 2];
+    a = colors[i][0][j + 3];
+    rgba[i][rgba[i].length] = [r, g, b, a];
   }
-  for ( i = 0; i < rgba.length; i++ ){
-    for ( j = 0; j < rgba[i].length; j++ ){
+  colors.splice(0, colors.length);
+  for ( i = 0, j = 0, height = rgba.length, width = rgba[i].length; i < height && j < width; j++, i = ( j == width ) ? i + 1 : i, j = ( j == width ) ? j = 0 : j ) {
       sameColor = false;
       if ( differentColors.length == 0){
-        aArray.splice(0,aArray.length)
-        differentColors.push(aArray.concat(rgba[i][j]));
-        differentColors[0].push(1);
+        spliceOne(aArray, 0);
+        differentColors[differentColors.length] = aArray.concat(rgba[i][j]);
+        differentColors[0][4] = 1;
       } else {
-        for ( x = 0; x < differentColors.length; x++ ){
+        for ( x = 0, differentColorsLength = differentColors.length; x < differentColorsLength; x++ ){
           if ( differentColors[x][0] === rgba[i][j][0] && differentColors[x][1] === rgba[i][j][1] && differentColors[x][2] === rgba[i][j][2] && differentColors[x][3] === rgba[i][j][3] ) {
             differentColors[x][4] += 1;
             sameColor = true;
@@ -72,13 +74,12 @@ function identifyShapes( colors ){
         }
         colorCounter = differentColors.length;
         if ( sameColor == false ){
-          aArray.splice(0,aArray.length)
-          differentColors.push(aArray.concat(rgba[i][j]));
-          differentColors[colorCounter].push(1);
+          spliceOne(aArray, 0);
+          differentColors[differentColors.length] = aArray.concat(rgba[i][j]);
+          differentColors[colorCounter][4] = 1;
         }
       }
       }
-    }
     console.log(differentColors);
 
   }
