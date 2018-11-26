@@ -33,14 +33,14 @@ function createCanvas(){
 function identifyShapes( colors ){
   var backgroundColor = "";
   var backgroundColorCount = 0;
-  var shapeColor;
+  var shapePosition = [];
   var r, g, b, a;
   var rgba = [];
   var differentColors = [];
   var colorCounter = 0;
   var max;
   var sameColor;
-  var color;
+  var color = "";
   var aArray = [];
   var spliceOne = function(arr, index) {
                          var len=arr.length;
@@ -59,7 +59,7 @@ function identifyShapes( colors ){
     a = colors[i][0][j + 3];
     rgba[i][rgba[i].length] = [r, g, b, a];
   }
-  colors.splice(0, colors.length);
+  // colors.splice(0, colors.length);
   for ( i = 0, j = 0, height = rgba.length, width = rgba[i].length; i < height && j < width; j++, i = ( j == width ) ? ++i : i, j = ( j == width ) ? j = 0 : j ) {
       sameColor = false;
       if ( differentColors.length == 0){
@@ -83,16 +83,37 @@ function identifyShapes( colors ){
       }
       }
     console.log(differentColors);
-    for ( x = 0, differentColorsLength = differentColors.length; x < differentColorsLength; ++x ){
-      if (  backgroundColorCount < differentColors[x][0][4] ) {
-        backgroundColorCount = differentColors[x][0][4];
-        r = differentColors[x][0][0];
-        g = differentColors[x][0][1];
-        b = differentColors[x][0][2];
-        a = differentColors[x][0][3];
-        backgroundColor = r + ", " + g + ", " + b + ", " + a;
-        console.log("hi");
+    for ( var x = 0, differentColorsLength = differentColors.length; x < differentColorsLength; ++x ){
+      if (  backgroundColorCount < differentColors[x][4] ) {
+        backgroundColorCount = differentColors[x][4];
+        r = differentColors[x][0];
+        g = differentColors[x][1];
+        b = differentColors[x][2];
+        a = differentColors[x][3];
+        backgroundColor = r + "" + g + "" + b + "" + a;
       }
     }
     console.log(backgroundColor);
+    console.log(rgba);
+    x = 0;
+    for ( i = 0, j = 0, height = rgba.length, width = rgba[i].length; i < height && j < width; j++, i = ( j == width ) ? ++i : i, j = ( j == width ) ? j = 0 : j ) {
+      color = rgba[i][j][0] + "" + rgba[i][j][1] + "" + rgba[i][j][2] + "" + rgba[i][j][3];
+      if ( backgroundColor != color ){
+          shapePosition[x] = j;
+          shapePosition[x + 1] = i;
+          x++;
+      }
+    }
+    console.log(shapePosition);
+  var canvas = document.getElementById('shapeCanvas');
+  canvas.width = 4000;
+  canvas.height = 4000;
+  var ctx = canvas.getContext("2d");
+  ctx.fillStyle = "#000000";
+  for ( i = 0, length = shapePosition.length; i < length; i += 2 ){
+    x = shapePosition[i];
+    y = shapePosition[i + 1];
+    ctx.fillRect(x,y,1,1);
+  }
+
   }
